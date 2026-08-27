@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Believe Inzideus Travel — Trip Log</title>
+<style>
+  :root {
+    --ink: #16233B;
+    --paper: #F5F6F3;
+    --surface: #FFFFFF;
+    --line: #DDE1DA;
+    --accent: #D8531E;
+    --accent-ink: #FFFFFF;
+    --muted: #6B7280;
+    --success: #2F9E44;
+    --danger: #C0392B;
+    --mono: 'Courier New', ui-monospace, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+
+  /* ---- App shell ---- */
+  .app {
+    display: flex;
+    min-height: 100vh;
+  }
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--ink);
+    color: #E9ECEF;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+  }
+  .brand {
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    margin-bottom: 12px;
+  }
+  .brand-mark {
+    font-family: var(--mono);
+    letter-spacing: 0.06em;
+    font-size: 11px;
+    color: #9AA5B1;
+    text-transform: uppercase;
+  }
+  .brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 4px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #C7CDD4;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+  .nav-item.active {
+    color: #fff;
+    border-left-color: var(--accent);
+    background: rgba(255,255,255,0.07);
+  }
+  .nav-dot { font-family: var(--mono); font-size: 12px; opacity: 0.6; }
+
+  .main {
+    flex: 1;
+    padding: 28px 32px 60px 32px;
+    max-width: 980px;
+  }
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+  }
+  .page-sub {
+    color: var(--muted);
+    font-size: 13.5px;
+    margin: 0 0 20px 0;
+  }
+
+  /* ---- Odometer readout (signature element) ---- */
+  .odometer-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .odometer {
+    background: var(--ink);
+    color: #F5F6F3;
+    border-radius: 6px;
+    padding: 14px 18px;
+    min-width: 130px;
+  }
+  .odometer-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9AA5B1;
+    margin-bottom: 6px;
+  }
+  .odometer-value {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: #0D1626;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  /* ---- Card / form ---- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 14px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px 16px;
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .field input, .field select {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 9px 10px;
+    font-size: 14px;
+    font-family: var(--sans);
+    background: #fff;
+    color: var(--ink);
+  }
+  .field input:focus, .field select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .form-actions { margin-top: 16px; display: flex; align-items: center; gap: 12px; }
+  button.primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:hover { filter: brightness(1.05); }
+  button.primary:disabled { opacity: 0.6; cursor: default; }
+  .status-msg { font-size: 13px; }
+  .status-msg.ok { color: var(--success); }
+  .status-msg.err { color: var(--danger); }
+
+  /* ---- Ledger table ---- */
+  .ledger-wrap { overflow-x: auto; }
+  table.ledger {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.ledger th {
+    text-align: left;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--ink);
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+  table.ledger td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  table.ledger tr:nth-child(even) td { background: #FAFAF8; }
+  .empty-state {
+    padding: 30px 10px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+  .refresh-link {
+    font-size: 12.5px;
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .config-banner {
+    background: #FFF4E5;
+    border: 1px solid #F0C36D;
+    color: #7A4E00;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .config-banner code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; }
+
+  @media (max-width: 720px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; }
+    .brand { display: none; }
+    .nav-item { border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; }
+    .nav-item.active { border-bottom-color: var(--accent); }
+    .main { padding: 20px 16px 40px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">Trip Log</div>
+      <div class="brand-name">Believe Inzideus<br>Travel</div>
+    </div>
+    <div class="nav-item active" data-tab="Trips"><span class="nav-dot">01</span> Trips</div>
+    <div class="nav-item" data-tab="Users"><span class="nav-dot">02</span> Users</div>
+    <div class="nav-item" data-tab="Cars"><span class="nav-dot">03</span> Cars</div>
+    <div class="nav-item" data-tab="Drivers"><span class="nav-dot">04</span> Drivers</div>
+  </div>
+
+  <div class="main">
+    <div id="configBanner" class="config-banner" style="display:none;">
+      ⚠ Set your Apps Script Web App URL in <code>CONFIG.SCRIPT_URL</code> near the top of the file's script section before this will work.
+    </div>
+
+    <div id="content"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   1. SET YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+   (Deploy > New deployment > Web app > copy the URL that ends in /exec)
+   ============================================================ */
+const CONFIG = {
+  SCRIPT_URL: "PASTE_YOUR_WEB_APP_URL_HERE"
+};
+
+/* ============================================================
+   2. Sheet definitions — field label, key (must match your
+   Google Sheet header text), input type
+   ============================================================ */
+const SHEETS = {
+  Trips: {
+    idLabel: "Trip",
+    fields: [
+      { key: "UserName", label: "Customer Name", type: "text", required: true },
+      { key: "UserMobile", label: "Customer Mobile", type: "tel" },
+      { key: "UserEmail", label: "Customer Email", type: "email" },
+      { key: "CarName", label: "Car", type: "text" },
+      { key: "StartingKM", label: "Starting KM", type: "number" },
+      { key: "EndingKM", label: "Ending KM", type: "number" },
+      { key: "Source", label: "Source", type: "text" },
+      { key: "Destination", label: "Destination", type: "text" },
+      { key: "NoOfPersons", label: "No. of Persons", type: "number" },
+      { key: "StartingDate", label: "Starting Date", type: "date" },
+      { key: "EndingDate", label: "Ending Date", type: "date" },
+      { key: "TotalAmount", label: "Total Amount", type: "number" },
+      { key: "DieselAmount", label: "Diesel Amount", type: "number" },
+      { key: "DriverAmount", label: "Driver Amount", type: "number" },
+      { key: "CarRent", label: "Car Rent", type: "number" },
+      { key: "DriverName", label: "Driver Name", type: "text" },
+      { key: "DriverMobile", label: "Driver Mobile", type: "tel" },
+      { key: "DriverCity", label: "Driver City", type: "text" }
+    ],
+    listColumns: ["TripID","UserName","CarName","Source","Destination","StartingKM","EndingKM","TotalKM","TotalAmount","StartingDate"]
+  },
+  Users: {
+    idLabel: "User",
+    fields: [
+      { key: "Name", label: "Full Name", type: "text", required: true },
+      { key: "Mobile", label: "Mobile", type: "tel" },
+      { key: "Email", label: "Email", type: "email" }
+    ],
+    listColumns: ["UserID","Name","Mobile","Email"]
+  },
+  Cars: {
+    idLabel: "Car",
+    fields: [
+      { key: "CarName", label: "Car Name / Model", type: "text", required: true },
+      { key: "CarNumber", label: "Registration Number", type: "text" },
+      { key: "Seats", label: "Seats", type: "number" }
+    ],
+    listColumns: ["CarID","CarName","CarNumber","Seats"]
+  },
+  Drivers: {
+    idLabel: "Driver",
+    fields: [
+      { key: "DriverName", label: "Driver Name", type: "text", required: true },
+      { key: "Mobile", label: "Mobile", type: "tel" },
+      { key: "City", label: "City", type: "text" }
+    ],
+    listColumns: ["DriverID","DriverName","Mobile","City"]
+  }
+};
+
+let currentTab = "Trips";
+const dataCache = {};
+
+function el(html) {
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+
+function renderApp() {
+  if (!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("PASTE_YOUR") !== -1) {
+    document.getElementById("configBanner").style.display = "block";
+  }
+  renderTab(currentTab);
+}
+
+function renderTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".nav-item").forEach(n => {
+    n.classList.toggle("active", n.dataset.tab === tab);
+  });
+
+  const def = SHEETS[tab];
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  const header = el(`
+    <div>
+      <h1 class="page-title">${tab}</h1>
+      <p class="page-sub">Add a new ${def.idLabel.toLowerCase()} record or view saved entries below.</p>
+    </div>
+  `);
+  content.appendChild(header);
+
+  if (tab === "Trips") {
+    const odoRow = el(`<div class="odometer-row" id="odoRow"></div>`);
+    content.appendChild(odoRow);
+  }
+
+  const formCard = el(`
+    <div class="card">
+      <div class="card-title">Add ${def.idLabel}</div>
+      <form id="entryForm" class="form-grid"></form>
+      <div class="form-actions">
+        <button type="submit" form="entryForm" class="primary">Save ${def.idLabel}</button>
+        <span id="statusMsg" class="status-msg"></span>
+      </div>
+    </div>
+  `);
+  content.appendChild(formCard);
+
+  const formGrid = formCard.querySelector("#entryForm");
+  def.fields.forEach(f => {
+    const field = el(`
+      <div class="field">
+        <label>${f.label}${f.required ? " *" : ""}</label>
+        <input type="${f.type}" name="${f.key}" ${f.required ? "required" : ""}>
+      </div>
+    `);
+    formGrid.appendChild(field);
+  });
+
+  formCard.querySelector("#entryForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    submitEntry(tab, e.target);
+  });
+
+  const listCard = el(`
+    <div class="card">
+      <div class="card-title">
+        <span>Saved ${tab}</span>
+        <span class="refresh-link" id="refreshLink">↻ Refresh</span>
+      </div>
+      <div class="ledger-wrap" id="ledgerWrap">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+  `);
+  content.appendChild(listCard);
+  listCard.querySelector("#refreshLink").addEventListener("click", () => loadList(tab, true));
+
+  loadList(tab, false);
+}
+
+function apiGet(params) {
+  const url = CONFIG.SCRIPT_URL + "?" + new URLSearchParams(params).toString();
+  return fetch(url).then(r => r.json());
+}
+
+function apiPost(body) {
+  return fetch(CONFIG.SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(body)
+  }).then(r => r.json());
+}
+
+function submitEntry(tab, formEl) {
+  const statusMsg = document.getElementById("statusMsg");
+  const btn = formEl.closest(".card").querySelector("button.primary");
+  const fields = {};
+  new FormData(formEl).forEach((v, k) => { fields[k] = v; });
+
+  btn.disabled = true;
+  statusMsg.textContent = "Saving…";
+  statusMsg.className = "status-msg";
+
+  apiPost({ sheet: tab, fields: fields })
+    .then(res => {
+      btn.disabled = false;
+      if (res.status === "success") {
+        statusMsg.textContent = "Saved ✓";
+        statusMsg.className = "status-msg ok";
+        formEl.reset();
+        loadList(tab, true);
+      } else {
+        statusMsg.textContent = "Error: " + res.message;
+        statusMsg.className = "status-msg err";
+      }
+    })
+    .catch(err => {
+      btn.disabled = false;
+      statusMsg.textContent = "Connection error: " + err;
+      statusMsg.className = "status-msg err";
+    });
+}
+
+function loadList(tab, forceRefresh) {
+  const wrap = document.getElementById("ledgerWrap");
+  if (!forceRefresh && dataCache[tab]) {
+    renderLedger(tab, dataCache[tab]);
+    return;
+  }
+  if (wrap) wrap.innerHTML = `<div class="empty-state">Loading…</div>`;
+
+  apiGet({ action: "list", sheet: tab })
+    .then(res => {
+      if (res.status !== "success") {
+        wrap.innerHTML = `<div class="empty-state">Error: ${res.message}</div>`;
+        return;
+      }
+      dataCache[tab] = res.data;
+      renderLedger(tab, res.data);
+      if (tab === "Trips") renderOdometer(res.data);
+    })
+    .catch(err => {
+      if (wrap) wrap.innerHTML = `<div class="empty-state">Couldn't connect — check the Web App URL. (${err})</div>`;
+    });
+}
+
+function renderLedger(tab, rows) {
+  const wrap = document.getElementById("ledgerWrap");
+  if (!wrap) return;
+  if (!rows || rows.length === 0) {
+    wrap.innerHTML = `<div class="empty-state">No ${tab.toLowerCase()} saved yet. Add one above.</div>`;
+    return;
+  }
+  const cols = SHEETS[tab].listColumns.filter(c => rows[0].hasOwnProperty(c));
+  const colsToUse = cols.length ? cols : Object.keys(rows[0]);
+
+  let html = `<table class="ledger"><thead><tr>${colsToUse.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>`;
+  rows.slice().reverse().slice(0, 100).forEach(r => {
+    html += `<tr>${colsToUse.map(c => `<td>${r[c] !== undefined ? r[c] : ""}</td>`).join("")}</tr>`;
+  });
+  html += `</tbody></table>`;
+  wrap.innerHTML = html;
+}
+
+function renderOdometer(rows) {
+  const row = document.getElementById("odoRow");
+  if (!row) return;
+  const totalTrips = rows.length;
+  const totalKM = rows.reduce((sum, r) => sum + (Number(r.TotalKM) || 0), 0);
+  const totalAmount = rows.reduce((sum, r) => sum + (Number(r.TotalAmount) || 0), 0);
+
+  row.innerHTML = `
+    <div class="odometer">
+      <div class="odometer-label">Total Trips</div>
+      <div class="odometer-value">${String(totalTrips).padStart(4,"0")}</div>
+    </div>
+    <div class="odometer">
+      <div class="odometer-label">Total KM</div>
+      <div class="odometer-value">${String(totalKM).padStart(6,"0")}</div>
+    </div>
+    <div class="odometer">
+      <div class="odometer-label">Total Revenue</div>
+      <div class="odometer-value">₹${totalAmount}</div>
+    </div>
+  `;
+}
+
+document.querySelectorAll(".nav-item").forEach(item => {
+  item.addEventListener("click", () => renderTab(item.dataset.tab));
+});
+
+renderApp();
+</script>
+
+</body>
+</html>
