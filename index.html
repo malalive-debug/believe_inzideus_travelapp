@@ -28,6 +28,81 @@
   }
   a { color: inherit; }
 
+  /* ---- Login screen ---- */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+    padding: 20px;
+  }
+  .login-card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 32px 30px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  }
+  .login-mark {
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .login-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 4px 0 22px 0;
+  }
+  .login-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+  .login-field label {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .login-field input {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 10px 11px;
+    font-size: 14.5px;
+    font-family: var(--sans);
+  }
+  .login-field input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .login-btn {
+    width: 100%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    border-radius: 5px;
+    padding: 11px 18px;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .login-btn:disabled { opacity: 0.6; cursor: default; }
+  .login-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 16px;
+  }
+  .login-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 18px;
+    line-height: 1.5;
+  }
+
   /* ---- App shell ---- */
   .app {
     display: flex;
@@ -78,6 +153,36 @@
     background: rgba(255,255,255,0.07);
   }
   .nav-dot { font-family: var(--mono); font-size: 12px; opacity: 0.6; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px 0 20px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .user-chip {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+  .user-chip .role-badge {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--accent);
+    color: #fff;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .logout-link {
+    font-size: 12.5px;
+    color: #9AA5B1;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .logout-link:hover { color: #fff; }
 
   .main {
     flex: 1;
@@ -234,38 +339,44 @@
   }
   .config-banner code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; }
 
+  /* ---- Reports ---- */
+  .period-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .period-btn {
+    border: 1px solid var(--line);
+    background: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  .period-btn.active {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-label { width: 110px; font-size: 12.5px; color: var(--muted); flex-shrink: 0; }
+  .bar-track { flex: 1; background: #EEF0EB; border-radius: 4px; height: 14px; overflow: hidden; }
+  .bar-fill { background: var(--accent); height: 100%; border-radius: 4px; }
+  .bar-value { width: 90px; text-align: right; font-family: var(--mono); font-size: 12.5px; flex-shrink: 0; }
+
   @media (max-width: 720px) {
     .app { flex-direction: column; }
-    .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; }
+    .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; align-items: center; }
     .brand { display: none; }
     .nav-item { border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; }
     .nav-item.active { border-bottom-color: var(--accent); }
+    .sidebar-footer { margin-top: 0; margin-left: auto; border-top: none; padding: 0 10px; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+    .user-chip { margin-bottom: 0; }
     .main { padding: 20px 16px 40px 16px; }
   }
 </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">Trip Log</div>
-      <div class="brand-name">Believe Inzideus<br>Travel</div>
-    </div>
-    <div class="nav-item active" data-tab="Trips"><span class="nav-dot">01</span> Trips</div>
-    <div class="nav-item" data-tab="Users"><span class="nav-dot">02</span> Users</div>
-    <div class="nav-item" data-tab="Cars"><span class="nav-dot">03</span> Cars</div>
-    <div class="nav-item" data-tab="Drivers"><span class="nav-dot">04</span> Drivers</div>
-  </div>
-
-  <div class="main">
-    <div id="configBanner" class="config-banner" style="display:none;">
-      ⚠ Set your Apps Script Web App URL in <code>CONFIG.SCRIPT_URL</code> near the top of the file's script section before this will work.
-    </div>
-
-    <div id="content"></div>
-  </div>
-</div>
+<div id="root"></div>
 
 <script>
 /* ============================================================
@@ -273,7 +384,7 @@
    (Deploy > New deployment > Web app > copy the URL that ends in /exec)
    ============================================================ */
 const CONFIG = {
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbw0KVYOvbVR1zoAK35TPtrbvpyI0poA7VDy5DzVM2VhW53UL_ZZ-qlHGZ62um0VmrO9/exec"
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbydKeqZR4-fYYberbNeYJEZbyxzNpo5b5VdEE7uMzzv9I2Fvo9xAxNmWaFJuG5_2wg/exec"
 };
 
 /* ============================================================
@@ -284,15 +395,16 @@ const SHEETS = {
   Trips: {
     idLabel: "Trip",
     fields: [
+      { key: "_customerPicker", label: "Select Customer", type: "user-select" },
       { key: "UserName", label: "Customer Name", type: "text", required: true },
       { key: "UserMobile", label: "Customer Mobile", type: "tel" },
       { key: "UserEmail", label: "Customer Email", type: "email" },
-      { key: "CarName", label: "Car", type: "text" },
+      { key: "CarName", label: "Car", type: "car-select", required: true },
       { key: "StartingKM", label: "Starting KM", type: "number" },
       { key: "EndingKM", label: "Ending KM", type: "number" },
       { key: "Source", label: "Source", type: "text" },
       { key: "Destination", label: "Destination", type: "text" },
-      { key: "NoOfPersons", label: "No. of Persons", type: "number" },
+      { key: "NoofPersons", label: "No. of Persons", type: "number" },
       { key: "StartingDate", label: "Starting Date", type: "date" },
       { key: "EndingDate", label: "Ending Date", type: "date" },
       { key: "TotalAmount", label: "Total Amount", type: "number" },
@@ -309,10 +421,13 @@ const SHEETS = {
     idLabel: "User",
     fields: [
       { key: "Name", label: "Full Name", type: "text", required: true },
-      { key: "Mobile", label: "Mobile", type: "tel" },
-      { key: "Email", label: "Email", type: "email" }
+      { key: "Mobile", label: "Mobile", type: "tel", required: true },
+      { key: "Email", label: "Email", type: "email" },
+      { key: "Password", label: "Password", type: "text", required: true },
+      { key: "Role", label: "Role (Admin / User)", type: "text" }
     ],
-    listColumns: ["UserID","Name","Mobile","Email"]
+    listColumns: ["UserID","Name","Mobile","Email","Role"],
+    adminOnly: true
   },
   Cars: {
     idLabel: "Car",
@@ -321,7 +436,8 @@ const SHEETS = {
       { key: "CarNumber", label: "Registration Number", type: "text" },
       { key: "Seats", label: "Seats", type: "number" }
     ],
-    listColumns: ["CarID","CarName","CarNumber","Seats"]
+    listColumns: ["CarID","CarName","CarNumber","Seats"],
+    adminOnly: true
   },
   Drivers: {
     idLabel: "Driver",
@@ -330,12 +446,16 @@ const SHEETS = {
       { key: "Mobile", label: "Mobile", type: "tel" },
       { key: "City", label: "City", type: "text" }
     ],
-    listColumns: ["DriverID","DriverName","Mobile","City"]
+    listColumns: ["DriverID","DriverName","Mobile","City"],
+    adminOnly: true
   }
 };
 
 let currentTab = "Trips";
+let currentUser = null; // { Name, Mobile, Email, Role }
 const dataCache = {};
+let carsListCache = null;
+let usersListCache = null;
 
 function el(html) {
   const t = document.createElement("template");
@@ -343,19 +463,206 @@ function el(html) {
   return t.content.firstChild;
 }
 
+function isAdmin() {
+  return currentUser && String(currentUser.Role).toLowerCase() === "admin";
+}
+
+function apiGet(params) {
+  const url = CONFIG.SCRIPT_URL + "?" + new URLSearchParams(params).toString();
+  return fetch(url).then(r => r.json());
+}
+
+function apiPost(body) {
+  return fetch(CONFIG.SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(body)
+  }).then(r => r.json());
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+
+function boot() {
+  const saved = localStorage.getItem("biu_user");
+  if (saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      renderApp();
+      return;
+    } catch (e) { /* fall through to login */ }
+  }
+  renderLogin();
+}
+
+function renderLogin() {
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+  const configWarning = (!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("PASTE_YOUR") !== -1)
+    ? `<div class="login-note" style="color:#C0392B;">⚠ Set CONFIG.SCRIPT_URL in the script before logging in.</div>`
+    : "";
+
+  const screen = el(`
+    <div class="login-screen">
+      <div class="login-card">
+        <div class="login-mark">Believe Inzideus Travel</div>
+        <div class="login-title">Sign in</div>
+        <form id="loginForm">
+          <div class="login-field">
+            <label>Mobile Number</label>
+            <input type="tel" name="mobile" required autocomplete="username">
+          </div>
+          <div class="login-field">
+            <label>Password</label>
+            <input type="password" name="password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="login-btn">Sign in</button>
+          <div class="login-error" id="loginError"></div>
+        </form>
+        <div class="login-note">
+          Only accounts already added to the Users sheet can sign in. There is no self sign-up — ask an admin to add you.
+        </div>
+        ${configWarning}
+      </div>
+    </div>
+  `);
+  root.appendChild(screen);
+
+  screen.querySelector("#loginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const btn = form.querySelector(".login-btn");
+    const errBox = form.querySelector("#loginError");
+    const mobile = form.mobile.value.trim();
+    const password = form.password.value;
+
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
+    errBox.textContent = "";
+
+    apiPost({ action: "login", mobile, password })
+      .then(res => {
+        btn.disabled = false;
+        btn.textContent = "Sign in";
+        if (res.status === "success") {
+          currentUser = res.user;
+          localStorage.setItem("biu_user", JSON.stringify(currentUser));
+          renderApp();
+        } else {
+          errBox.textContent = res.message || "Invalid mobile number or password";
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.textContent = "Sign in";
+        errBox.textContent = "Connection error: " + err;
+      });
+  });
+}
+
+function logout() {
+  localStorage.removeItem("biu_user");
+  currentUser = null;
+  dataCache && Object.keys(dataCache).forEach(k => delete dataCache[k]);
+  renderLogin();
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+
+function navItems() {
+  const items = [{ key: "Trips", label: "Trips" }];
+  if (isAdmin()) {
+    items.push({ key: "Reports", label: "Reports" });
+    items.push({ key: "Users", label: "Users" });
+    items.push({ key: "Cars", label: "Cars" });
+    items.push({ key: "Drivers", label: "Drivers" });
+  }
+  return items;
+}
+
 function renderApp() {
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+
+  const items = navItems();
+  if (!items.find(i => i.key === currentTab)) currentTab = "Trips";
+
+  const app = el(`
+    <div class="app">
+      <div class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">Trip Log</div>
+          <div class="brand-name">Believe Inzideus<br>Travel</div>
+        </div>
+        <div id="navList"></div>
+        <div class="sidebar-footer">
+          <div class="user-chip">
+            ${currentUser.Name || currentUser.Mobile}
+            <span class="role-badge">${isAdmin() ? "Admin" : "Staff"}</span>
+          </div>
+          <span class="logout-link" id="logoutLink">Sign out</span>
+        </div>
+      </div>
+      <div class="main">
+        <div id="configBanner" class="config-banner" style="display:none;">
+          ⚠ Set your Apps Script Web App URL in <code>CONFIG.SCRIPT_URL</code> near the top of the file's script section before this will work.
+        </div>
+        <div id="content"></div>
+      </div>
+    </div>
+  `);
+  root.appendChild(app);
+
+  const navList = app.querySelector("#navList");
+  items.forEach((item, idx) => {
+    const navEl = el(`
+      <div class="nav-item ${item.key === currentTab ? "active" : ""}" data-tab="${item.key}">
+        <span class="nav-dot">${String(idx + 1).padStart(2, "0")}</span> ${item.label}
+      </div>
+    `);
+    navEl.addEventListener("click", () => renderTab(item.key));
+    navList.appendChild(navEl);
+  });
+
+  app.querySelector("#logoutLink").addEventListener("click", logout);
+
   if (!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("PASTE_YOUR") !== -1) {
     document.getElementById("configBanner").style.display = "block";
   }
+
   renderTab(currentTab);
 }
 
 function renderTab(tab) {
+  // Guard: block non-admins from admin-only tabs even if they hit them directly
+  const def = SHEETS[tab];
+  if (tab !== "Trips" && tab !== "Reports" && (!def || (def.adminOnly && !isAdmin()))) {
+    tab = "Trips";
+  }
+  if (tab === "Reports" && !isAdmin()) {
+    tab = "Trips";
+  }
+
   currentTab = tab;
   document.querySelectorAll(".nav-item").forEach(n => {
     n.classList.toggle("active", n.dataset.tab === tab);
   });
 
+  if (tab === "Reports") {
+    renderReportsTab();
+    return;
+  }
+
+  renderSheetTab(tab);
+}
+
+/* ============================================================
+   TRIPS / USERS / CARS / DRIVERS TAB (generic CRUD-ish view)
+   ============================================================ */
+
+function renderSheetTab(tab) {
   const def = SHEETS[tab];
   const content = document.getElementById("content");
   content.innerHTML = "";
@@ -386,14 +693,39 @@ function renderTab(tab) {
   content.appendChild(formCard);
 
   const formGrid = formCard.querySelector("#entryForm");
+
   def.fields.forEach(f => {
-    const field = el(`
-      <div class="field">
-        <label>${f.label}${f.required ? " *" : ""}</label>
-        <input type="${f.type}" name="${f.key}" ${f.required ? "required" : ""}>
-      </div>
-    `);
-    formGrid.appendChild(field);
+    if (f.type === "car-select") {
+      const field = el(`
+        <div class="field">
+          <label>${f.label}${f.required ? " *" : ""}</label>
+          <select name="${f.key}" ${f.required ? "required" : ""}>
+            <option value="">Loading cars…</option>
+          </select>
+        </div>
+      `);
+      formGrid.appendChild(field);
+      populateCarSelect(field.querySelector("select"));
+    } else if (f.type === "user-select") {
+      const field = el(`
+        <div class="field">
+          <label>${f.label}</label>
+          <select name="${f.key}">
+            <option value="">Loading customers…</option>
+          </select>
+        </div>
+      `);
+      formGrid.appendChild(field);
+      populateUserSelect(field.querySelector("select"), formGrid);
+    } else {
+      const field = el(`
+        <div class="field">
+          <label>${f.label}${f.required ? " *" : ""}</label>
+          <input type="${f.type}" name="${f.key}" ${f.required ? "required" : ""}>
+        </div>
+      `);
+      formGrid.appendChild(field);
+    }
   });
 
   formCard.querySelector("#entryForm").addEventListener("submit", (e) => {
@@ -418,16 +750,64 @@ function renderTab(tab) {
   loadList(tab, false);
 }
 
-function apiGet(params) {
-  const url = CONFIG.SCRIPT_URL + "?" + new URLSearchParams(params).toString();
-  return fetch(url).then(r => r.json());
+function populateCarSelect(selectEl) {
+  function fill(cars) {
+    selectEl.innerHTML = '<option value="">Select a car…</option>' +
+      cars.map(c => `<option value="${(c.CarName || "").toString()}">${(c.CarName || "Unnamed")}${c.CarNumber ? " — " + c.CarNumber : ""}</option>`).join("");
+  }
+  if (carsListCache) {
+    fill(carsListCache);
+    return;
+  }
+  apiGet({ action: "list", sheet: "Cars" })
+    .then(res => {
+      if (res.status === "success") {
+        carsListCache = res.data;
+        fill(carsListCache);
+      } else {
+        selectEl.innerHTML = '<option value="">Could not load cars</option>';
+      }
+    })
+    .catch(() => {
+      selectEl.innerHTML = '<option value="">Could not load cars</option>';
+    });
 }
 
-function apiPost(body) {
-  return fetch(CONFIG.SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(body)
-  }).then(r => r.json());
+function populateUserSelect(selectEl, formGrid) {
+  function fill(users) {
+    selectEl.innerHTML = '<option value="">+ New / other customer (type below)</option>' +
+      users.map((u, i) => `<option value="${i}">${(u.Name || "Unnamed")}${u.Mobile ? " — " + u.Mobile : ""}</option>`).join("");
+  }
+
+  selectEl.addEventListener("change", () => {
+    if (!usersListCache) return;
+    const idx = selectEl.value;
+    const nameInput = formGrid.querySelector('[name="UserName"]');
+    const mobileInput = formGrid.querySelector('[name="UserMobile"]');
+    const emailInput = formGrid.querySelector('[name="UserEmail"]');
+    if (idx === "" || !usersListCache[idx]) return;
+    const u = usersListCache[idx];
+    if (nameInput) nameInput.value = u.Name || "";
+    if (mobileInput) mobileInput.value = u.Mobile || "";
+    if (emailInput) emailInput.value = u.Email || "";
+  });
+
+  if (usersListCache) {
+    fill(usersListCache);
+    return;
+  }
+  apiGet({ action: "list", sheet: "Users" })
+    .then(res => {
+      if (res.status === "success") {
+        usersListCache = res.data;
+        fill(usersListCache);
+      } else {
+        selectEl.innerHTML = '<option value="">Could not load customers</option>';
+      }
+    })
+    .catch(() => {
+      selectEl.innerHTML = '<option value="">Could not load customers</option>';
+    });
 }
 
 function submitEntry(tab, formEl) {
@@ -448,6 +828,8 @@ function submitEntry(tab, formEl) {
         statusMsg.className = "status-msg ok";
         formEl.reset();
         loadList(tab, true);
+        if (tab === "Cars") carsListCache = null; // refresh car dropdown next time it's used
+        if (tab === "Users") usersListCache = null; // refresh customer dropdown next time it's used
       } else {
         statusMsg.textContent = "Error: " + res.message;
         statusMsg.className = "status-msg err";
@@ -524,11 +906,170 @@ function renderOdometer(rows) {
   `;
 }
 
-document.querySelectorAll(".nav-item").forEach(item => {
-  item.addEventListener("click", () => renderTab(item.dataset.tab));
-});
+/* ============================================================
+   REPORTS TAB (Admin only) — Weekly / Monthly / Yearly
+   ============================================================ */
 
-renderApp();
+let reportPeriod = "monthly";
+
+function renderReportsTab() {
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  const header = el(`
+    <div>
+      <h1 class="page-title">Reports</h1>
+      <p class="page-sub">Trip counts, kilometres and revenue grouped by period.</p>
+    </div>
+  `);
+  content.appendChild(header);
+
+  const tabsCard = el(`
+    <div class="period-tabs">
+      <div class="period-btn" data-period="weekly">Weekly</div>
+      <div class="period-btn" data-period="monthly">Monthly</div>
+      <div class="period-btn" data-period="yearly">Yearly</div>
+    </div>
+  `);
+  content.appendChild(tabsCard);
+
+  const reportCard = el(`
+    <div class="card">
+      <div class="card-title"><span id="reportCardTitle">Monthly totals</span></div>
+      <div id="reportBody"><div class="empty-state">Loading…</div></div>
+    </div>
+  `);
+  content.appendChild(reportCard);
+
+  tabsCard.querySelectorAll(".period-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.period === reportPeriod);
+    btn.addEventListener("click", () => {
+      reportPeriod = btn.dataset.period;
+      tabsCard.querySelectorAll(".period-btn").forEach(b => b.classList.toggle("active", b === btn));
+      loadReportData();
+    });
+  });
+
+  loadReportData();
+}
+
+function loadReportData() {
+  const body = document.getElementById("reportBody");
+  const titleEl = document.getElementById("reportCardTitle");
+  if (titleEl) {
+    titleEl.textContent = reportPeriod.charAt(0).toUpperCase() + reportPeriod.slice(1) + " totals";
+  }
+
+  function build(rows) {
+    const grouped = groupTripsByPeriod(rows, reportPeriod);
+    renderReportTable(grouped);
+  }
+
+  if (dataCache["Trips"]) {
+    build(dataCache["Trips"]);
+    return;
+  }
+
+  if (body) body.innerHTML = `<div class="empty-state">Loading…</div>`;
+  apiGet({ action: "list", sheet: "Trips" })
+    .then(res => {
+      if (res.status !== "success") {
+        body.innerHTML = `<div class="empty-state">Error: ${res.message}</div>`;
+        return;
+      }
+      dataCache["Trips"] = res.data;
+      build(res.data);
+    })
+    .catch(err => {
+      if (body) body.innerHTML = `<div class="empty-state">Couldn't connect. (${err})</div>`;
+    });
+}
+
+function parseSheetDate(val) {
+  if (!val) return null;
+  if (val instanceof Date) return val;
+  // Format coming back from Apps Script: "dd-MMM-yyyy HH:mm"
+  const months = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
+  const m = String(val).match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})/);
+  if (m && months.hasOwnProperty(m[2])) {
+    return new Date(Number(m[3]), months[m[2]], Number(m[1]));
+  }
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function isoWeek(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+}
+
+function groupTripsByPeriod(rows, period) {
+  const groups = {};
+  (rows || []).forEach(r => {
+    const d = parseSheetDate(r.StartingDate);
+    if (!d) return;
+    let key;
+    if (period === "weekly") {
+      key = d.getFullYear() + " · Wk " + String(isoWeek(d)).padStart(2, "0");
+    } else if (period === "monthly") {
+      key = d.toLocaleString("en-US", { month: "short" }) + " " + d.getFullYear();
+    } else {
+      key = String(d.getFullYear());
+    }
+    if (!groups[key]) groups[key] = { period: key, sortKey: d.getTime(), trips: 0, km: 0, revenue: 0 };
+    groups[key].trips += 1;
+    groups[key].km += Number(r.TotalKM) || 0;
+    groups[key].revenue += Number(r.TotalAmount) || 0;
+  });
+  return Object.values(groups).sort((a, b) => b.sortKey - a.sortKey).slice(0, 24);
+}
+
+function renderReportTable(groups) {
+  const body = document.getElementById("reportBody");
+  if (!body) return;
+  if (!groups.length) {
+    body.innerHTML = `<div class="empty-state">No trips with a Starting Date to report on yet.</div>`;
+    return;
+  }
+
+  const maxRevenue = Math.max(...groups.map(g => g.revenue), 1);
+
+  let html = `<div style="margin-bottom:18px;">`;
+  groups.forEach(g => {
+    const pct = Math.max(4, Math.round((g.revenue / maxRevenue) * 100));
+    html += `
+      <div class="bar-row">
+        <div class="bar-label">${g.period}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;"></div></div>
+        <div class="bar-value">₹${g.revenue.toLocaleString("en-IN")}</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+
+  html += `<div class="ledger-wrap"><table class="ledger"><thead><tr>
+    <th>Period</th><th>Trips</th><th>Total KM</th><th>Total Revenue</th>
+  </tr></thead><tbody>`;
+  groups.forEach(g => {
+    html += `<tr>
+      <td>${g.period}</td>
+      <td>${g.trips}</td>
+      <td>${g.km.toLocaleString("en-IN")}</td>
+      <td>₹${g.revenue.toLocaleString("en-IN")}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  body.innerHTML = html;
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+boot();
 </script>
 
 </body>
